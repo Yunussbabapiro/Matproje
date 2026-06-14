@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7. Sınıf Matematik Pro - Detaylı Analiz</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: #2d2d2d;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 580px;
+            text-align: center;
+            border: 1px solid #444;
+        }
+        h1 { color: #ffc107; margin-bottom: 5px; }
+        h2 { color: #e0e0e0; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin: 6px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            width: 85%;
+            transition: 0.2s;
+            font-weight: bold;
+        }
+        button:hover { background: #0056b3; }
+        .screen { display: none; }
+        .active { display: block; }
+        #timer {
+            font-size: 26px;
+            font-weight: bold;
+            color: #ff3333;
+            margin-bottom: 15px;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .stats-text {
+            font-size: 18px;
+            margin: 10px 0;
+            color: #bbb;
+        }
+        .scrollable-menu {
+            max-height: 350px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            padding-right: 5px;
+        }
+        select {
+            background: #444;
+            color: white;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #666;
+            width: 50%;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .topic-stat-card {
+            background: #383838;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+            text-align: left;
+            border-left: 5px solid #ffc107;
+            font-size: 14px;
+        }
+        .stat-grid {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+        }
+        .txt-success { color: #28a745; font-weight: bold; }
+        .txt-danger { color: #dc3545; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="main-menu" class="screen active">
+        <h1>7. Sınıf Matematik Canavarı</h1>
+        <p style="color: #aaa; margin-bottom: 20px;">Gelişmiş Performans Takipli Ders Çalışma Programı</p>
+        <button onclick="changeScreen('topic-screen')">Konular</button>
+        <button onclick="showStats()">İstatistikler</button>
+    </div>
+
+    <div id="topic-screen" class="screen">
+        <h2>Bir Konu Seçin</h2>
+        <div class="scrollable-menu">
+            <button onclick="selectTopic('Tam Sayılarla İşlemler')">1. Ünite: Tam Sayılarla İşlemler</button>
+            <button onclick="selectTopic('Rasyonel Sayılar')">2. Ünite: Rasyonel Sayılar ve İşlemler</button>
+            <button onclick="selectTopic('Cebirsel İfadeler')">3. Ünite: Cebirsel İfadeler</button>
+            <button onclick="selectTopic('Eşitlik ve Denklem')">3. Ünite: Eşitlik ve Denklem</button>
+            <button onclick="selectTopic('Oran ve Orantı')">4. Ünite: Oran ve Orantı</button>
+            <button onclick="selectTopic('Yüzdeler')">4. Ünite: Yüzdeler</button>
+            <button onclick="selectTopic('Doğrular ve Açılar')">5. Ünite: Doğrular ve Açılar</button>
+            <button onclick="selectTopic('Çokgenler')">5. Ünite: Çokgenler (Alan/Çevre)</button>
+            <button onclick="selectTopic('Çember ve Daire')">5. Ünite: Çember ve Daire</button>
+            <button onclick="selectTopic('Veri Analizi')">6. Ünite: Veri Analizi (Grafikler)</button>
+        </div>
+        <button style="background:#555;" onclick="changeScreen('main-menu')">← Geri</button>
+    </div>
+
+    <div id="difficulty-screen" class="screen">
+        <h2>Sınav Ayarları</h2>
+        
+        <p style="margin-bottom: 5px; color: #ffc107;">Soru Sayısı Seçin:</p>
+        <select id="question-count-select"></select>
+
+        <p style="margin-bottom: 5px; color: #ffc107;">Zorluk Seviyesi Seçin:</p>
+        <button style="background: #28a745;" onclick="startGame('kolay')">Kolay (5 Saniye)</button>
+        <button style="background: #ffc107; color: #000;" onclick="startGame('orta')">Orta (5 Saniye)</button>
+        <button style="background: #fd7e14;" onclick="startGame('zor')">Zor (10 Saniye) 🔥</button>
+        <button style="background: #dc3545;" onclick="startGame('imkansiz')">İmkansız (15 Saniye) 💀</button>
+        <button style="background:#555;" onclick="changeScreen('topic-screen')">← Geri</button>
+    </div>
+
+    <div id="game-screen" class="screen">
+        <div id="question-number" style="color: #ffc107;">Soru: 1 / --</div>
+        <div id="timer">Süre: --</div>
+        <h3 id="question-text" style="font-size: 20px; line-height: 1.5; margin-bottom: 25px;">Soru yükleniyor...</h3>
+        <div class="options-container" id="options-box"></div>
+        <!-- YENİ EKLENEN GERİ/VAZGEÇ BUTONU -->
+        <hr style="border: 0; border-top: 1px dashed #555; margin: 20px 0 10px 0;">
+        <button style="background:#555; width: 60%; font-size: 14px; padding: 8px;" onclick="quitGame()">Sınavdan Çık ←</button>
+    </div>
+
+    <div id="result-screen" class="screen">
+        <h2>Sınav Raporu</h2>
+        <p class="stats-text" id="final-topic-name" style="color: #ffc107; font-weight: bold;"></p>
+        <p class="stats-text" id="final-correct" style="color: #28a745;">Doğru: 0</p>
+        <p class="stats-text" id="final-wrong" style="color: #dc3545;">Yanlış: 0</p>
+        <button onclick="changeScreen('main-menu')">Ana Menüye Dön</button>
+    </div>
+
+    <div id="stats-screen" class="screen">
+        <h2>Başarı Analizi</h2>
+        <div class="scrollable-menu" id="stats-render-box">
+            </div>
+        <button style="background: #dc3545; width: 40%; font-size: 13px;" onclick="clearAllStats()">Verileri Sıfırla</button>
+        <button style="background: #555; width: 40%; font-size: 13px;" onclick="changeScreen('main-menu')">Geri Dön</button>
+    </div>
+</div>
+
+<script {timestamp="2026"}>
+    let currentTopic = "";
+    let currentDifficulty = "";
+    let currentQuestionIdx = 0;
+    let correctCount = 0;
+    let wrongCount = 0;
+    let timeLeft = 0;
+    let timerInterval;
+    let currentCorrectAnswer = 0;
+    let totalQuestions = 15;
+
+    // Tüm 7. sınıf konularının listesi (Veritabanı anahtarları için)
+    const topicList = [
+        'Tam Sayılarla İşlemler', 'Rasyonel Sayılar', 'Cebirsel İfadeler', 
+        'Eşitlik ve Denklem', 'Oran ve Orantı', 'Yüzdeler', 
+        'Doğrular ve Açılar', 'Çokgenler', 'Çember ve Daire', 'Veri Analizi'
+    ];
+
+    // Soru sayısı seçeneğini (5'ten 50'ye kadar) dinamik doldurma
+    const selectElem = document.getElementById('question-count-select');
+    for (let i = 5; i <= 50; i += 5) {
+        let opt = document.createElement('option');
+        opt.value = i;
+        opt.innerText = `${i} Soru`;
+        if (i === 15) opt.selected = true; // Varsayılan değer 15 olsun
+        selectElem.appendChild(opt);
+    }
+
+    function changeScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+    }
+
+    function selectTopic(topic) {
+        currentTopic = topic;
+        changeScreen('difficulty-screen');
+    }
+
+    function startGame(difficulty) {
+        currentDifficulty = difficulty;
+        totalQuestions = parseInt(document.getElementById('question-count-select').value);
+        currentQuestionIdx = 0;
+        correctCount = 0;
+        wrongCount = 0;
+        
+        document.getElementById('question-number').innerText = `Soru: 1 / ${totalQuestions}`;
+        changeScreen('game-screen');
+        nextQuestion();
+    }
+
+    // YENİ EKLENEN SINAVDAN ÇIKMA FONKSİYONU
+    function quitGame() {
+        if(confirm("Devam eden sınavdan çıkmak ve ana menüye dönmek istediğine emin misin? (İlerlemen kaydedilmez)")) {
+            clearInterval(timerInterval); // Zamanlayıcıyı kesinlikle durduruyoruz
+            changeScreen('main-menu'); // Ana menüye güvenle dönüyoruz
+        }
+    }
+
+    // (Önceki adımdaki güçlü soru motorunu koruyoruz)
+    function generateQuestion(topic, difficulty) {
+        let min, max, questionText, correctAnswer;
+        
+        if (difficulty === 'kolay') { min = 5; max = 15; }
+        else if (difficulty === 'orta') { min = 15; max = 40; }
+        else if (difficulty === 'zor') { min = 35; max = 120; }
+        else { min = 110; max = 450; }
+
+        let n1 = Math.floor(Math.random() * (max - min + 1)) + min;
+        let n2 = Math.floor(Math.random() * (max - min + 1)) + min;
+        let n3 = Math.floor(Math.random() * (max / 2 - 5 + 1)) + 5; 
+
+        switch(topic) {
+            case 'Tam Sayılarla İşlemler':
+                n1 = -n1; if(Math.random() > 0.5) n2 = -n2;
+                if (difficulty === 'zor') {
+                    questionText = `[(${n1}) · (${n2})] - (${-n3}) işleminin sonucu kaçtır?`;
+                    correctAnswer = (n1 * n2) - (-n3);
+                } else if (difficulty === 'imkansiz') {
+                    let n4 = Math.floor(Math.random() * 20) + 10;
+                    questionText = `[(${n1}) · (${-n2})] + [(${-n3}) · ${n4}] işleminin sonucu kaçtır?`;
+                    correctAnswer = (n1 * -n2) + (-n3 * n4);
+                } else {
+                    questionText = `Hexa-Sistem Kontrolü: (${n1}) + (${n2}) kaçtır?`;
+                    correctAnswer = n1 + n2;
+                }
+                break;
+
+            case 'Rasyonel Sayılar':
+                let d1 = Math.floor(Math.random() * 6) + 3;
+                let d2 = Math.floor(Math.random() * 6) + 3;
+                if (difficulty === 'zor' || difficulty === 'imkansiz') {
+                    questionText = `(${n1}/${d1}) ÷ (${n2}/${d2}) işleminin en yakın ondalık sonucu kaçtır?`;
+                    correctAnswer = Math.round((n1/d1) / (n2/d2) * 10) / 10;
+                } else {
+                    questionText = `(${n1}/${d1}) + (${n2}/${d1}) işleminin ondalık değeri kaçtır?`;
+                    correctAnswer = Math.round((n1/d1 + n2/d1) * 10) / 10;
+                }
+                break;
+
+            case 'Cebirsel İfadeler':
+                let xVal = Math.floor(Math.random() * 8) + 3;
+                if (difficulty === 'zor' || difficulty === 'imkansiz') {
+                    questionText = `${n3} · (${n1}x - ${n2}) ifadesinin x = ${xVal} için değeri kaçtır?`;
+                    correctAnswer = n3 * (n1 * xVal - n2);
+                } else {
+                    questionText = `${n1}x - ${n2} ifadesinin x = ${xVal} için değeri kaçtır?`;
+                    correctAnswer = (n1 * xVal) - n2;
+                }
+                break;
+
+            case 'Eşitlik ve Denklem':
+                let realX = Math.floor(Math.random() * 15) + 5;
+                if (difficulty === 'zor' || difficulty === 'imkansiz') {
+                    let c_coef = Math.floor(Math.random() * 5) + 1;
+                    let a_coef = c_coef + Math.floor(Math.random() * 5) + 2; 
+                    let b_const = Math.floor(Math.random() * 50) + 10;
+                    let d_const = (a_coef * realX) + b_const - (c_coef * realX);
+                    questionText = `${a_coef}x + ${b_const} = ${c_coef}x + ${d_const} ise x kaçtır?`;
+                    correctAnswer = realX;
+                } else {
+                    let a_coef = Math.floor(Math.random() * 4) + 2;
+                    let ansC = (a_coef * realX) + n1;
+                    questionText = `${a_coef}x + ${n1} = ${ansC} denkleminde x kaçtır?`;
+                    correctAnswer = realX;
+                }
+                break;
+
+            case 'Oran ve Orantı':
+                if (difficulty === 'zor' || difficulty === 'imkansiz') {
+                    questionText = `Aynı güçteki ${n3} işçi bir işi ${n1} günde bitirirse, aynı güçteki ${n3 * 2} işçi aynı işi kaç günde bitirir? (Yuvarla)`;
+                    correctAnswer = Math.round((n3 * n1) / (n3 * 2));
+                } else {
+                    let mult = Math.floor(Math.random() * 5) + 2;
+                    questionText = `${n1} / ${n2} = X / ${n2 * mult} orantısında X kaçtır?`;
+                    correctAnswer = n1 * mult;
+                }
+                break;
+
+            case 'Yüzdeler':
+                let yz = (difficulty === 'zor' || difficulty === 'imkansiz') ? (Math.floor(Math.random() * 45) + 15) : 25;
+                if (difficulty === 'zor' || difficulty === 'imkansiz') {
+                    questionText = `${n1 * 4} sayısının %${yz} fazlası kaçtır? (En yakın tam sayıya yuvarla)`;
+                    correctAnswer = Math.round((n1 * 4) * (1 + yz/100));
+                } else {
+                    questionText = `${n1 * 10} sayısının %30'u kaçtır?`;
+                    correctAnswer = (n1 * 10) * 0.3;
+                }
+                break;
+
+            case 'Doğrular ve Açılar':
+                if (difficulty === 'zor' || difficulty === 'imkansiz') {
+                    let x_hidden = Math.floor(Math.random() * 10) + 2;
+                    let aci1 = 4 * x_hidden + 10;
+                    let aci2 = 180 - aci1;
+                    questionText = `Paralel iki doğru arasında karşı durumlu iki açıdan biri 4x + 10° ve diğeri ${aci2}° ise x kaçtır?`;
+                    correctAnswer = x_hidden;
+                } else {
+                    questionText = `Bütünler iki açıdan biri diğerinin 2 katı ise küçük açı kaç derecedir?`;
+                    correctAnswer = 60;
+                }
+                break;
+
+            case 'Çokgenler':
+                if (difficulty === 'zor' || difficulty === 'imkansiz') {
+                    let k_sayi = Math.floor(Math.random() * 5) + 8;
+                    questionText = `Bir iç açısı ${((k_sayi-2)*180)/k_sayi}° olan düzgün çokgenin toplam kaç kenarı vardır?`;
+                    correctAnswer = k_sayi;
+                } else {
+                    questionText = `Bir düzgün altıgenin bir iç açısı kaç derecedir?`;
+                    correctAnswer = 120;
+                }
+                break;
+
+            case 'Çember ve Daire':
+                let rad = Math.floor(Math.random() * 15) + 5;
+                if (difficulty === 'zor' || difficulty === 'imkansiz') {
+                    let merkezAci = [60, 90, 120, 180][Math.floor(Math.random() * 4)];
+                    questionText = `Yarıçapı r = ${rad} cm olan dairede ${merkezAci}°'lik merkez açının gördüğü daire diliminin alanı kaç cm²'dir? (π = 3, yuvarla)`;
+                    correctAnswer = Math.round((3 * rad * rad * merkezAci) / 360);
+                } else {
+                    questionText = `Yarıçapı r = ${rad} cm olan dairenin alanı kaç cm²'dir? (π = 3)`;
+                    correctAnswer = 3 * rad * rad;
+                }
+                break;
+
+            case 'Veri Analizi':
+                let arr = [n1, n2, n3, Math.floor(n1/2)];
+                if (difficulty === 'zor' || difficulty === 'imkansiz') {
+                    let sum = arr.reduce((a,b)=>a+b, 0);
+                    questionText = `${arr.join(', ')} ve X sayılarının aritmetik ortalaması ${Math.round(sum/4) + 5} ise X kaçtır?`;
+                    correctAnswer = (Math.round(sum/4) + 5) * 5 - sum;
+                } else {
+                    questionText = `${n1}, ${n2} ve ${n3} sayılarının aritmetik ortalaması hangisine en yakındır?`;
+                    correctAnswer = Math.round(((n1+n2+n3)/3)*10)/10;
+                }
+                break;
+        }
+
+        let options = [correctAnswer];
+        while(options.length < 4) {
+            let sapma = Math.floor(Math.random() * 4) + 1;
+            let y_cevap = Math.random() > 0.5 ? correctAnswer + sapma : correctAnswer - sapma;
+            if (topic === 'Rasyonel Sayılar' || questionText.includes('yakın')) {
+                y_cevap = Math.round(y_cevap * 10) / 10;
+            }
+            if(!options.includes(y_cevap)) options.push(y_cevap);
+        }
+        options.sort(() => Math.random() - 0.5);
+
+        return { question: questionText, answer: correctAnswer, options: options };
+    }
+
+    function nextQuestion() {
+        clearInterval(timerInterval);
+        currentQuestionIdx++;
+
+        if (currentQuestionIdx > totalQuestions) {
+            endGame();
+            return;
+        }
+
+        document.getElementById('question-number').innerText = `Soru: ${currentQuestionIdx} / ${totalQuestions}`;
+        
+        if (currentDifficulty === 'kolay' || currentDifficulty === 'orta') timeLeft = 5;
+        else if (currentDifficulty === 'zor') timeLeft = 10;
+        else if (currentDifficulty === 'imkansiz') timeLeft = 15;
+
+        document.getElementById('timer').innerText = `Süre: ${timeLeft}`;
+        
+        let qData = generateQuestion(currentTopic, currentDifficulty);
+        document.getElementById('question-text').innerText = qData.question;
+        currentCorrectAnswer = qData.answer;
+
+        let optionsBox = document.getElementById('options-box');
+        optionsBox.innerHTML = "";
+        qData.options.forEach(opt => {
+            let btn = document.createElement('button');
+            btn.innerText = opt;
+            btn.onclick = () => handleAnswer(opt);
+            optionsBox.appendChild(btn);
+        });
+
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            document.getElementById('timer').innerText = `Süre: ${timeLeft}`;
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                handleAnswer(null); 
+            }
+        }, 1000);
+    }
+
+    function handleAnswer(selectedOption) {
+        if (selectedOption === currentCorrectAnswer) {
+            correctCount++;
+        } else {
+            wrongCount++;
+        }
+        nextQuestion();
+    }
+
+    // ELEKTRONİK VERİ KAYIT SİSTEMİ (KONU BAZLI)
+    function endGame() {
+        clearInterval(timerInterval);
+        changeScreen('result-screen');
+        
+        document.getElementById('final-topic-name').innerText = currentTopic;
+        document.getElementById('final-correct').innerText = `Doğru: ${correctCount}`;
+        document.getElementById('final-wrong').innerText = `Yanlış: ${wrongCount}`;
+
+        // Telefonun LocalStorage hafızasından o konunun eski verilerini çek
+        let statsData = JSON.parse(localStorage.getItem('matematik_pro_stats')) || {};
+        
+        // Eğer o konuya ait kayıt yoksa sıfırdan oluştur
+        if (!statsData[currentTopic]) {
+            statsData[currentTopic] = { correct: 0, wrong: 0 };
+        }
+
+        // Mevcut sonuçları biriktirerek eski istatistiğe ekle
+        statsData[currentTopic].correct += correctCount;
+        statsData[currentTopic].wrong += wrongCount;
+
+        // Güncel veriyi tekrar telefona kaydet
+        localStorage.setItem('matematik_pro_stats', JSON.stringify(statsData));
+    }
+
+    // İSTATİSTİKLERİ EKRANA ÇİZME FONKSİYONU
+    function showStats() {
+        changeScreen('stats-screen');
+        let statsData = JSON.parse(localStorage.getItem('matematik_pro_stats')) || {};
+        let renderBox = document.getElementById('stats-render-box');
+        renderBox.innerHTML = "";
+
+        topicList.forEach(topic => {
+            let tCorrect = statsData[topic] ? statsData[topic].correct : 0;
+            let tWrong = statsData[topic] ? statsData[topic].wrong : 0;
+            let total = tCorrect + tWrong;
+            let basariYuzdesi = total > 0 ? Math.round((tCorrect / total) * 100) : 0;
+
+            let card = document.createElement('div');
+            card.className = "topic-stat-card";
+            card.innerHTML = `
+                <strong>${topic}</strong>
+                <div class="stat-grid">
+                    <span>Doğru: <span class="txt-success">${tCorrect}</span></span>
+                    <span>Yanlış: <span class="txt-danger">${tWrong}</span></span>
+                    <span>Başarı: <span style="color:#ffc107">${basariYuzdesi}%</span></span>
+                </div>
+            `;
+            renderBox.appendChild(card);
+        });
+    }
+
+    // VERİLERİ SIFIRLAMA
+    function clearAllStats() {
+        if(confirm("Tüm konu istatistiklerini sıfırlamak istediğine emin misin?")) {
+            localStorage.removeItem('matematik_pro_stats');
+            showStats();
+        }
+    }
+</script>
+
+</body>
+</html>
